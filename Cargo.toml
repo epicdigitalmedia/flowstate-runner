@@ -1,0 +1,34 @@
+[package]
+name = "flowstate-runner"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+description = "FlowState process execution engine"
+license = "Apache-2.0"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+reqwest = { version = "0.12", features = ["json"] }
+clap = { version = "4", features = ["derive"] }
+axum = "0.7"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+thiserror = "2"
+anyhow = "1"
+async-trait = "0.1"
+regex = "1"
+chrono = { version = "0.4", features = ["serde"] }
+tokio-stream = "0.1"
+tempfile = "3"
+nanoid = "0.4"
+
+[[test]]
+name = "handlers"
+path = "tests/handlers/mod.rs"
+
+[dev-dependencies]
+wiremock = "0.6"
+tokio-test = "0.4"
+tower = { version = "0.5", features = ["util"] }
