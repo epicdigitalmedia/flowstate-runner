@@ -88,11 +88,7 @@ impl RunContext {
     /// Get a single document by ID.
     /// VCA collections route through MCP `collection-get`; native collections
     /// use REST directly.
-    pub async fn get<T: DeserializeOwned>(
-        &self,
-        collection: &str,
-        id: &str,
-    ) -> Result<T> {
+    pub async fn get<T: DeserializeOwned>(&self, collection: &str, id: &str) -> Result<T> {
         if is_vca(collection) {
             self.mcp.get(collection, id).await
         } else {
@@ -103,11 +99,7 @@ impl RunContext {
     /// Write (upsert) a document.
     /// VCA collections route through MCP `collection-create` (the returned ID
     /// is ignored); native collections use REST `/set` directly.
-    pub async fn set(
-        &self,
-        collection: &str,
-        doc: &serde_json::Value,
-    ) -> Result<()> {
+    pub async fn set(&self, collection: &str, doc: &serde_json::Value) -> Result<()> {
         if is_vca(collection) {
             self.mcp.create(collection, doc).await?;
             Ok(())
@@ -119,12 +111,7 @@ impl RunContext {
     /// Update an existing document.
     /// VCA collections route through MCP `collection-update` for merge
     /// semantics (partial update); native collections use REST upsert.
-    pub async fn update(
-        &self,
-        collection: &str,
-        id: &str,
-        data: &serde_json::Value,
-    ) -> Result<()> {
+    pub async fn update(&self, collection: &str, id: &str, data: &serde_json::Value) -> Result<()> {
         if is_vca(collection) {
             self.mcp.update(collection, id, data).await
         } else {
@@ -293,7 +280,10 @@ impl Handler for StubHandler {
         _state: &ExecutionState,
         _ctx: &RunContext,
     ) -> Result<StepOutcome> {
-        tracing::debug!(step_type = self.0, "Stub handler executed — no-op for unimplemented step type");
+        tracing::debug!(
+            step_type = self.0,
+            "Stub handler executed — no-op for unimplemented step type"
+        );
         Ok(StepOutcome::Completed {
             outputs: HashMap::new(),
         })

@@ -22,7 +22,7 @@ Use [GitHub Security Advisories](https://github.com/epicdm/flowstate-runner/secu
 
 ### 2. Email
 
-Send an email to [security@epicdm.com](mailto:security@epicdm.com) with the following information:
+Send an email to [security@epicdigital.media](mailto:security@epicdigital.media) with the following information:
 
 - A description of the vulnerability
 - Steps to reproduce the issue
@@ -94,5 +94,5 @@ The following are in scope for security reports:
 
 ## Contact
 
-- **Security Reports**: [security@epicdm.com](mailto:security@epicdm.com)
+- **Security Reports**: [security@epicdigital.media](mailto:security@epicdigital.media)
 - **General Issues**: [GitHub Issues](https://github.com/epicdm/flowstate-runner/issues)

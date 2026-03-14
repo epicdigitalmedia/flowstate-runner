@@ -35,8 +35,12 @@ fn make_run_context_with_url(base_url: &str) -> RunContext {
         mcp: McpClient::new(&format!("{}/mcp", base_url), "test-org", "test-workspace"),
         agent_executor: Box::new(flowstate_runner::agent::NoopAgentExecutor),
         attribute_map: AttributeMap::default(),
-        process_cache: std::sync::Mutex::new(flowstate_runner::cache::TtlCache::new(std::time::Duration::from_secs(60))),
-        step_cache: std::sync::Mutex::new(flowstate_runner::cache::TtlCache::new(std::time::Duration::from_secs(60))),
+        process_cache: std::sync::Mutex::new(flowstate_runner::cache::TtlCache::new(
+            std::time::Duration::from_secs(60),
+        )),
+        step_cache: std::sync::Mutex::new(flowstate_runner::cache::TtlCache::new(
+            std::time::Duration::from_secs(60),
+        )),
         token_exchanger: None,
     }
 }

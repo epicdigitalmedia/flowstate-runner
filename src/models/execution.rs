@@ -323,16 +323,14 @@ impl ExecutionState {
         // a schema migration and keeps the DB record shape stable.
         let mut metadata = self.metadata.clone();
         match &self.pause_reason {
-            Some(reason) => {
-                match serde_json::to_value(reason) {
-                    Ok(encoded) => {
-                        metadata.insert("_pause_reason".to_string(), encoded);
-                    }
-                    Err(e) => {
-                        tracing::error!(error = %e, "Failed to serialize PauseReason — dropping");
-                    }
+            Some(reason) => match serde_json::to_value(reason) {
+                Ok(encoded) => {
+                    metadata.insert("_pause_reason".to_string(), encoded);
                 }
-            }
+                Err(e) => {
+                    tracing::error!(error = %e, "Failed to serialize PauseReason — dropping");
+                }
+            },
             None => {
                 metadata.remove("_pause_reason");
             }

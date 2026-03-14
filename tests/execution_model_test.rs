@@ -1,8 +1,7 @@
-
 #[test]
 fn test_execution_record_with_string_tags_in_context() {
-    use serde_json::json;
     use flowstate_runner::models::execution::ProcessExecutionRecord;
+    use serde_json::json;
 
     let flat = json!({
         "id": "exec_0kIHXNcdQJ",

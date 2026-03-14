@@ -29,7 +29,8 @@ async fn test_load_templates_returns_hashmap() {
         .mount(&mock_server)
         .await;
 
-    let mcp = flowstate_runner::clients::mcp::McpClient::new(&mock_server.uri(), "org_test", "work_test");
+    let mcp =
+        flowstate_runner::clients::mcp::McpClient::new(&mock_server.uri(), "org_test", "work_test");
     let templates = load_templates(&mcp).await.unwrap();
 
     assert_eq!(templates.len(), 1);
@@ -49,7 +50,8 @@ async fn test_load_templates_empty_returns_empty_map() {
         .mount(&mock_server)
         .await;
 
-    let mcp = flowstate_runner::clients::mcp::McpClient::new(&mock_server.uri(), "org_test", "work_test");
+    let mcp =
+        flowstate_runner::clients::mcp::McpClient::new(&mock_server.uri(), "org_test", "work_test");
     let templates = load_templates(&mcp).await.unwrap();
 
     assert!(templates.is_empty());
@@ -65,7 +67,8 @@ async fn test_load_templates_propagates_rest_error() {
         .mount(&mock_server)
         .await;
 
-    let mcp = flowstate_runner::clients::mcp::McpClient::new(&mock_server.uri(), "org_test", "work_test");
+    let mcp =
+        flowstate_runner::clients::mcp::McpClient::new(&mock_server.uri(), "org_test", "work_test");
     let result = load_templates(&mcp).await;
 
     assert!(result.is_err(), "Should propagate MCP error");
@@ -173,9 +176,9 @@ async fn test_build_run_context_wires_all_dependencies() {
         health_port: 9090,
         max_subprocess_depth: 5,
         agent_executor: "claude-cli".to_string(),
-            auth_token: None,
-            api_token: None,
-            auth_url: None,
+        auth_token: None,
+        api_token: None,
+        auth_url: None,
         persist_interval: 1,
     };
 
@@ -207,9 +210,9 @@ async fn test_build_run_context_fails_when_mcp_unreachable() {
         health_port: 9090,
         max_subprocess_depth: 5,
         agent_executor: "claude-cli".to_string(),
-            auth_token: None,
-            api_token: None,
-            auth_url: None,
+        auth_token: None,
+        api_token: None,
+        auth_url: None,
         persist_interval: 1,
     };
 

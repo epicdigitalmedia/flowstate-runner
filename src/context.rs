@@ -92,6 +92,7 @@ pub async fn init_mcp_with_retry(
 /// 3. Load virtual collection schemas into REST client
 /// 4. Load step templates (via MCP — steptemplates is a VCA collection)
 /// 5. Load attribute map (tag/category name-to-ID resolution)
+///
 /// Resolve the auth token and optional token exchanger.
 ///
 /// Priority:
@@ -100,9 +101,7 @@ pub async fn init_mcp_with_retry(
 ///    The `TokenExchanger` is returned so it can be stored for later refresh.
 /// 2. Otherwise, fall back to the static `FLOWSTATE_AUTH_TOKEN` env var.
 /// 3. If neither is set, return `None` (unauthenticated, internal Docker use).
-async fn resolve_auth_token(
-    config: &Config,
-) -> Result<(Option<String>, Option<TokenExchanger>)> {
+async fn resolve_auth_token(config: &Config) -> Result<(Option<String>, Option<TokenExchanger>)> {
     if let (Some(api_token), Some(auth_url)) = (&config.api_token, &config.auth_url) {
         tracing::info!("Exchanging API token for JWT via {}", auth_url);
         let exchanger = TokenExchanger::new(api_token.clone(), auth_url.clone())
@@ -168,11 +167,13 @@ pub async fn build_run_context(
     let templates = match load_templates(&mcp).await {
         Ok(t) => t,
         Err(e) => {
-            tracing::warn!(error = format!("{:#}", e), "Template loading failed — continuing without templates");
+            tracing::warn!(
+                error = format!("{:#}", e),
+                "Template loading failed — continuing without templates"
+            );
             HashMap::new()
         }
     };
-
 
     // 5. Load attribute map (scoped to org/workspace)
     let attribute_map = AttributeMap::load(&rest, &config.org_id, &config.workspace_id).await?;

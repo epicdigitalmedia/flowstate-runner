@@ -35,8 +35,12 @@ fn make_run_context() -> RunContext {
         mcp: McpClient::new("http://localhost:9999/mcp", "test-org", "test-workspace"),
         agent_executor: Box::new(flowstate_runner::agent::NoopAgentExecutor),
         attribute_map: AttributeMap::default(),
-        process_cache: std::sync::Mutex::new(flowstate_runner::cache::TtlCache::new(std::time::Duration::from_secs(60))),
-        step_cache: std::sync::Mutex::new(flowstate_runner::cache::TtlCache::new(std::time::Duration::from_secs(60))),
+        process_cache: std::sync::Mutex::new(flowstate_runner::cache::TtlCache::new(
+            std::time::Duration::from_secs(60),
+        )),
+        step_cache: std::sync::Mutex::new(flowstate_runner::cache::TtlCache::new(
+            std::time::Duration::from_secs(60),
+        )),
         token_exchanger: None,
     }
 }
@@ -340,8 +344,12 @@ fn make_run_context_with_mcp_url(mcp_url: &str) -> RunContext {
         mcp: McpClient::new("http://localhost:9999/mcp", "test-org", "test-workspace"),
         agent_executor: Box::new(flowstate_runner::agent::NoopAgentExecutor),
         attribute_map: AttributeMap::default(),
-        process_cache: std::sync::Mutex::new(flowstate_runner::cache::TtlCache::new(std::time::Duration::from_secs(60))),
-        step_cache: std::sync::Mutex::new(flowstate_runner::cache::TtlCache::new(std::time::Duration::from_secs(60))),
+        process_cache: std::sync::Mutex::new(flowstate_runner::cache::TtlCache::new(
+            std::time::Duration::from_secs(60),
+        )),
+        step_cache: std::sync::Mutex::new(flowstate_runner::cache::TtlCache::new(
+            std::time::Duration::from_secs(60),
+        )),
         token_exchanger: None,
     }
 }
@@ -558,14 +566,12 @@ async fn test_mcp_tool_with_response_mapping() {
 
     Mock::given(method("POST"))
         .and(path("/mcp/tools/collection-query"))
-        .respond_with(
-            ResponseTemplate::new(200).set_body_json(json!({
-                "documents": [
-                    {"id": "task_001", "title": "First task"}
-                ],
-                "total": 1
-            })),
-        )
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "documents": [
+                {"id": "task_001", "title": "First task"}
+            ],
+            "total": 1
+        })))
         .mount(&mock_server)
         .await;
 
@@ -581,7 +587,11 @@ async fn test_mcp_tool_with_response_mapping() {
     }));
     let state = make_state();
     let mut ctx = make_run_context_with_mcp_url(&format!("{}/mcp", mock_server.uri()));
-    ctx.mcp = McpClient::new(&format!("{}/mcp", mock_server.uri()), "test-org", "test-workspace");
+    ctx.mcp = McpClient::new(
+        &format!("{}/mcp", mock_server.uri()),
+        "test-org",
+        "test-workspace",
+    );
 
     let result = handler.execute(&step, &state, &ctx).await.unwrap();
     match result {
@@ -611,16 +621,14 @@ async fn test_mcp_tool_response_mapping_nested_path() {
 
     Mock::given(method("POST"))
         .and(path("/mcp/tools/collection-get"))
-        .respond_with(
-            ResponseTemplate::new(200).set_body_json(json!({
-                "document": {
-                    "id": "task_abc",
-                    "metadata": {
-                        "priority": "high"
-                    }
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "document": {
+                "id": "task_abc",
+                "metadata": {
+                    "priority": "high"
                 }
-            })),
-        )
+            }
+        })))
         .mount(&mock_server)
         .await;
 
@@ -636,7 +644,11 @@ async fn test_mcp_tool_response_mapping_nested_path() {
     }));
     let state = make_state();
     let mut ctx = make_run_context_with_mcp_url(&format!("{}/mcp", mock_server.uri()));
-    ctx.mcp = McpClient::new(&format!("{}/mcp", mock_server.uri()), "test-org", "test-workspace");
+    ctx.mcp = McpClient::new(
+        &format!("{}/mcp", mock_server.uri()),
+        "test-org",
+        "test-workspace",
+    );
 
     let result = handler.execute(&step, &state, &ctx).await.unwrap();
     match result {
@@ -663,12 +675,10 @@ async fn test_mcp_tool_response_mapping_missing_path() {
 
     Mock::given(method("POST"))
         .and(path("/mcp/tools/collection-query"))
-        .respond_with(
-            ResponseTemplate::new(200).set_body_json(json!({
-                "documents": [],
-                "total": 0
-            })),
-        )
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "documents": [],
+            "total": 0
+        })))
         .mount(&mock_server)
         .await;
 
@@ -684,7 +694,11 @@ async fn test_mcp_tool_response_mapping_missing_path() {
     }));
     let state = make_state();
     let mut ctx = make_run_context_with_mcp_url(&format!("{}/mcp", mock_server.uri()));
-    ctx.mcp = McpClient::new(&format!("{}/mcp", mock_server.uri()), "test-org", "test-workspace");
+    ctx.mcp = McpClient::new(
+        &format!("{}/mcp", mock_server.uri()),
+        "test-org",
+        "test-workspace",
+    );
 
     // Should complete without error even when paths resolve to nothing
     let result = handler.execute(&step, &state, &ctx).await.unwrap();
@@ -711,12 +725,10 @@ async fn test_mcp_tool_backward_compat() {
 
     Mock::given(method("POST"))
         .and(path("/mcp/tools/collection-query"))
-        .respond_with(
-            ResponseTemplate::new(200).set_body_json(json!({
-                "documents": [{"id": "task_zzz"}],
-                "total": 1
-            })),
-        )
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "documents": [{"id": "task_zzz"}],
+            "total": 1
+        })))
         .mount(&mock_server)
         .await;
 
@@ -729,7 +741,11 @@ async fn test_mcp_tool_backward_compat() {
     }));
     let state = make_state();
     let mut ctx = make_run_context_with_mcp_url(&format!("{}/mcp", mock_server.uri()));
-    ctx.mcp = McpClient::new(&format!("{}/mcp", mock_server.uri()), "test-org", "test-workspace");
+    ctx.mcp = McpClient::new(
+        &format!("{}/mcp", mock_server.uri()),
+        "test-org",
+        "test-workspace",
+    );
 
     let result = handler.execute(&step, &state, &ctx).await.unwrap();
     match result {
@@ -762,8 +778,7 @@ async fn test_mcp_tool_with_external_url() {
     Mock::given(method("POST"))
         .and(path("/tools/analyze"))
         .respond_with(
-            ResponseTemplate::new(200)
-                .set_body_json(json!({ "analysis": "done", "score": 95 })),
+            ResponseTemplate::new(200).set_body_json(json!({ "analysis": "done", "score": 95 })),
         )
         .mount(&external_server)
         .await;
@@ -815,8 +830,7 @@ async fn test_mcp_tool_with_external_url_interpolation() {
     Mock::given(method("POST"))
         .and(path("/tools/greet"))
         .respond_with(
-            ResponseTemplate::new(200)
-                .set_body_json(json!({ "greeting": "hello world" })),
+            ResponseTemplate::new(200).set_body_json(json!({ "greeting": "hello world" })),
         )
         .mount(&external_server)
         .await;
@@ -840,9 +854,7 @@ async fn test_mcp_tool_with_external_url_interpolation() {
     match result {
         StepOutcome::Completed { outputs } => {
             assert_eq!(
-                outputs
-                    .get("result")
-                    .and_then(|v| v.get("greeting")),
+                outputs.get("result").and_then(|v| v.get("greeting")),
                 Some(&json!("hello world")),
                 "should receive greeting from interpolated external server URL"
             );

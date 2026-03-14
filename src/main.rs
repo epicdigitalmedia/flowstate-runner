@@ -100,10 +100,9 @@ async fn main() {
         Command::Daemon { interval } => {
             tracing::info!(interval_secs = interval, "Starting daemon mode");
 
-            let mut sigterm = tokio::signal::unix::signal(
-                tokio::signal::unix::SignalKind::terminate(),
-            )
-            .expect("Failed to register SIGTERM handler");
+            let mut sigterm =
+                tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate())
+                    .expect("Failed to register SIGTERM handler");
 
             loop {
                 // Refresh JWT before each cycle. The exchanger caches the
@@ -209,9 +208,10 @@ async fn run_execution(
 
     // Expose planDir as a variable for template resolution in step actions
     if let Some(ref dir) = state.plan_dir {
-        state
-            .variables
-            .insert("planDir".to_string(), serde_json::Value::String(dir.clone()));
+        state.variables.insert(
+            "planDir".to_string(),
+            serde_json::Value::String(dir.clone()),
+        );
     }
 
     tracing::info!(

@@ -124,7 +124,9 @@ impl Handler for ApprovalHandler {
 
         let approval_id = record["id"]
             .as_str()
-            .ok_or_else(|| anyhow::anyhow!("build_approval_record produced a record without string id"))?
+            .ok_or_else(|| {
+                anyhow::anyhow!("build_approval_record produced a record without string id")
+            })?
             .to_owned();
 
         ctx.set("approvals", &record).await?;

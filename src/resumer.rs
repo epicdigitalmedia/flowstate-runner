@@ -4,8 +4,8 @@ use crate::executor::{
 };
 use crate::handlers::{dispatch_handler, RunContext};
 use crate::models::execution::{ExecutionState, ProcessExecutionRecord, StepOutcome};
-use crate::output::map_outputs;
 use crate::models::process::StepTemplate;
+use crate::output::map_outputs;
 use crate::state::compute_plan_dir;
 use crate::template::resolve_template;
 use anyhow::{Context, Result};

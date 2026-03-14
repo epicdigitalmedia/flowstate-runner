@@ -239,8 +239,7 @@ where
 /// Persist execution state to DB via REST.
 pub(crate) async fn persist_state(state: &ExecutionState, ctx: &RunContext) -> Result<()> {
     let record = state.to_record();
-    let data = serde_json::to_value(&record)
-        .context("Failed to serialize execution state")?;
+    let data = serde_json::to_value(&record).context("Failed to serialize execution state")?;
     ctx.update("processexecutions", &state.id, &data)
         .await
         .context("Failed to persist execution state")?;

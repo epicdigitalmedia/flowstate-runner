@@ -1,6 +1,6 @@
 pub mod agent;
-pub mod auth;
 pub mod attributes;
+pub mod auth;
 pub mod cache;
 pub mod cli;
 pub mod clients;

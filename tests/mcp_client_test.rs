@@ -129,8 +129,20 @@ async fn test_query_returns_deserialized_vec() {
         .unwrap();
 
     assert_eq!(docs.len(), 2);
-    assert_eq!(docs[0], TaskDoc { id: "task_1".into(), title: "Task One".into() });
-    assert_eq!(docs[1], TaskDoc { id: "task_2".into(), title: "Task Two".into() });
+    assert_eq!(
+        docs[0],
+        TaskDoc {
+            id: "task_1".into(),
+            title: "Task One".into()
+        }
+    );
+    assert_eq!(
+        docs[1],
+        TaskDoc {
+            id: "task_2".into(),
+            title: "Task Two".into()
+        }
+    );
 }
 
 #[tokio::test]
@@ -144,9 +156,7 @@ async fn test_query_without_limit_omits_limit_field() {
             "collection": "tasks",
             "selector": {}
         })))
-        .respond_with(
-            ResponseTemplate::new(200).set_body_json(json!({ "documents": [] })),
-        )
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({ "documents": [] })))
         .mount(&mock_server)
         .await;
 
@@ -192,7 +202,13 @@ async fn test_get_returns_deserialized_document() {
     let client = McpClient::new(&mock_server.uri(), "org_test", "work_test");
     let doc: TaskDoc = client.get("tasks", "task_abc").await.unwrap();
 
-    assert_eq!(doc, TaskDoc { id: "task_abc".into(), title: "My Task".into() });
+    assert_eq!(
+        doc,
+        TaskDoc {
+            id: "task_abc".into(),
+            title: "My Task".into()
+        }
+    );
 }
 
 #[tokio::test]
@@ -227,8 +243,7 @@ async fn test_create_returns_document_id() {
             "data": { "title": "New Task" }
         })))
         .respond_with(
-            ResponseTemplate::new(200)
-                .set_body_json(json!({ "documentId": "task_new999" })),
+            ResponseTemplate::new(200).set_body_json(json!({ "documentId": "task_new999" })),
         )
         .mount(&mock_server)
         .await;
@@ -253,7 +268,9 @@ async fn test_create_missing_document_id_returns_error() {
         .await;
 
     let client = McpClient::new(&mock_server.uri(), "org_test", "work_test");
-    let result = client.create("tasks", &json!({ "title": "New Task" })).await;
+    let result = client
+        .create("tasks", &json!({ "title": "New Task" }))
+        .await;
 
     assert!(result.is_err());
     assert!(result

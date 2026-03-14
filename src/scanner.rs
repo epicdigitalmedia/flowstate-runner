@@ -436,10 +436,7 @@ pub async fn scan(ctx: &RunContext) -> anyhow::Result<ScanReport> {
                 "updatedAt": now
             });
 
-            match ctx
-                .set("processexecutions", &execution_record)
-                .await
-            {
+            match ctx.set("processexecutions", &execution_record).await {
                 Ok(()) => {
                     tracing::info!(
                         execution_id = %exec_id,
@@ -500,7 +497,11 @@ async fn batch_active_check(
     if !results.is_empty() {
         return Ok(results
             .iter()
-            .filter_map(|r| r.get("externalId").and_then(Value::as_str).map(str::to_owned))
+            .filter_map(|r| {
+                r.get("externalId")
+                    .and_then(Value::as_str)
+                    .map(str::to_owned)
+            })
             .collect());
     }
 

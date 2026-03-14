@@ -70,10 +70,7 @@ async fn execute_command(
         }
         Some(Value::Object(obj)) => {
             // Bash runner format: command is an object with inner command/args
-            let inner_cmd = obj
-                .get("command")
-                .and_then(Value::as_str)
-                .unwrap_or("");
+            let inner_cmd = obj.get("command").and_then(Value::as_str).unwrap_or("");
             let inner_args = obj.get("args");
             (inner_cmd, inner_args)
         }
@@ -420,8 +417,7 @@ async fn execute_mcp_tool(
                     if let Some(path) = path_val.as_str() {
                         // Support both "$.field.nested" (JSONPath-like) and "field.nested" (plain)
                         let clean_path = path.strip_prefix("$.").unwrap_or(path);
-                        if let Some(value) =
-                            crate::output::resolve_json_path(&response, clean_path)
+                        if let Some(value) = crate::output::resolve_json_path(&response, clean_path)
                         {
                             outputs.insert(var_name.clone(), value.clone());
                         }

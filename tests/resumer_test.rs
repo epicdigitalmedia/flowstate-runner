@@ -34,8 +34,12 @@ fn make_test_context(base_url: &str) -> RunContext {
         mcp: McpClient::new(base_url, "org_test", "work_test"),
         agent_executor: Box::new(flowstate_runner::agent::NoopAgentExecutor),
         attribute_map: AttributeMap::default(),
-        process_cache: std::sync::Mutex::new(flowstate_runner::cache::TtlCache::new(std::time::Duration::from_secs(60))),
-        step_cache: std::sync::Mutex::new(flowstate_runner::cache::TtlCache::new(std::time::Duration::from_secs(60))),
+        process_cache: std::sync::Mutex::new(flowstate_runner::cache::TtlCache::new(
+            std::time::Duration::from_secs(60),
+        )),
+        step_cache: std::sync::Mutex::new(flowstate_runner::cache::TtlCache::new(
+            std::time::Duration::from_secs(60),
+        )),
         token_exchanger: None,
     }
 }
@@ -47,7 +51,9 @@ async fn test_resume_no_paused_executions() {
     // processexecutions is VCA — query goes through MCP
     Mock::given(method("POST"))
         .and(path_regex(r"tools/collection-query"))
-        .and(body_partial_json(json!({ "collection": "processexecutions" })))
+        .and(body_partial_json(
+            json!({ "collection": "processexecutions" }),
+        ))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
             "documents": []
         })))
@@ -70,7 +76,9 @@ async fn test_resume_approval_approved_continues_execution() {
     // Paused execution with approval pause reason (VCA — MCP query)
     Mock::given(method("POST"))
         .and(path_regex(r"tools/collection-query"))
-        .and(body_partial_json(json!({ "collection": "processexecutions" })))
+        .and(body_partial_json(
+            json!({ "collection": "processexecutions" }),
+        ))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
             "documents": [{
                 "id": "exec_paused1",
@@ -100,7 +108,9 @@ async fn test_resume_approval_approved_continues_execution() {
     // Process for loading name (VCA — MCP get)
     Mock::given(method("POST"))
         .and(path_regex(r"tools/collection-get"))
-        .and(body_partial_json(json!({ "collection": "processes", "id": "proc_resume1" })))
+        .and(body_partial_json(
+            json!({ "collection": "processes", "id": "proc_resume1" }),
+        ))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
             "document": {
                 "id": "proc_resume1",
@@ -165,7 +175,9 @@ async fn test_resume_approval_approved_continues_execution() {
     // Accept execution updates via MCP collection-update (persist_state)
     Mock::given(method("POST"))
         .and(path_regex(r"tools/collection-update"))
-        .and(body_partial_json(json!({ "collection": "processexecutions" })))
+        .and(body_partial_json(
+            json!({ "collection": "processexecutions" }),
+        ))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
             "success": true
         })))
@@ -187,7 +199,9 @@ async fn test_resume_still_waiting() {
     // Paused execution with approval pending (VCA — MCP query)
     Mock::given(method("POST"))
         .and(path_regex(r"tools/collection-query"))
-        .and(body_partial_json(json!({ "collection": "processexecutions" })))
+        .and(body_partial_json(
+            json!({ "collection": "processexecutions" }),
+        ))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
             "documents": [{
                 "id": "exec_waiting",
@@ -217,7 +231,9 @@ async fn test_resume_still_waiting() {
     // Process (VCA — MCP get)
     Mock::given(method("POST"))
         .and(path_regex(r"tools/collection-get"))
-        .and(body_partial_json(json!({ "collection": "processes", "id": "proc_wait" })))
+        .and(body_partial_json(
+            json!({ "collection": "processes", "id": "proc_wait" }),
+        ))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
             "document": {
                 "id": "proc_wait",
@@ -279,7 +295,9 @@ async fn test_resume_subprocess_child_completed() {
     // Paused parent execution with subprocess pause reason (VCA — MCP query)
     Mock::given(method("POST"))
         .and(path_regex(r"tools/collection-query"))
-        .and(body_partial_json(json!({ "collection": "processexecutions" })))
+        .and(body_partial_json(
+            json!({ "collection": "processexecutions" }),
+        ))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
             "documents": [{
                 "id": "exec_parent",
@@ -309,7 +327,9 @@ async fn test_resume_subprocess_child_completed() {
     // Process (VCA — MCP get)
     Mock::given(method("POST"))
         .and(path_regex(r"tools/collection-get"))
-        .and(body_partial_json(json!({ "collection": "processes", "id": "proc_sub" })))
+        .and(body_partial_json(
+            json!({ "collection": "processes", "id": "proc_sub" }),
+        ))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
             "document": {
                 "id": "proc_sub",
@@ -363,7 +383,9 @@ async fn test_resume_subprocess_child_completed() {
     // Child execution: completed (VCA — MCP get)
     Mock::given(method("POST"))
         .and(path_regex(r"tools/collection-get"))
-        .and(body_partial_json(json!({ "collection": "processexecutions", "id": "exec_child1" })))
+        .and(body_partial_json(
+            json!({ "collection": "processexecutions", "id": "exec_child1" }),
+        ))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
             "document": {
                 "id": "exec_child1",
@@ -387,7 +409,9 @@ async fn test_resume_subprocess_child_completed() {
     // Accept execution updates via MCP collection-update (persist_state)
     Mock::given(method("POST"))
         .and(path_regex(r"tools/collection-update"))
-        .and(body_partial_json(json!({ "collection": "processexecutions" })))
+        .and(body_partial_json(
+            json!({ "collection": "processexecutions" }),
+        ))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
             "success": true
         })))

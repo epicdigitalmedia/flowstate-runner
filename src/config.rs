@@ -95,9 +95,15 @@ impl Config {
                 .ok()
                 .or(file_config.agent_executor)
                 .unwrap_or_else(|| "claude-cli".to_string()),
-            auth_token: std::env::var("FLOWSTATE_AUTH_TOKEN").ok().filter(|s| !s.is_empty()),
-            api_token: std::env::var("FLOWSTATE_API_TOKEN").ok().filter(|s| !s.is_empty()),
-            auth_url: std::env::var("FLOWSTATE_AUTH_URL").ok().filter(|s| !s.is_empty()),
+            auth_token: std::env::var("FLOWSTATE_AUTH_TOKEN")
+                .ok()
+                .filter(|s| !s.is_empty()),
+            api_token: std::env::var("FLOWSTATE_API_TOKEN")
+                .ok()
+                .filter(|s| !s.is_empty()),
+            auth_url: std::env::var("FLOWSTATE_AUTH_URL")
+                .ok()
+                .filter(|s| !s.is_empty()),
             persist_interval: std::env::var("PERSIST_INTERVAL")
                 .ok()
                 .and_then(|v| v.parse().ok())

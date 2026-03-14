@@ -43,8 +43,12 @@ fn make_run_context_with_url(url: &str) -> RunContext {
         mcp: McpClient::new(url, "org_test", "work_test"),
         agent_executor: Box::new(NoopAgentExecutor),
         attribute_map: AttributeMap::default(),
-        process_cache: std::sync::Mutex::new(flowstate_runner::cache::TtlCache::new(std::time::Duration::from_secs(60))),
-        step_cache: std::sync::Mutex::new(flowstate_runner::cache::TtlCache::new(std::time::Duration::from_secs(60))),
+        process_cache: std::sync::Mutex::new(flowstate_runner::cache::TtlCache::new(
+            std::time::Duration::from_secs(60),
+        )),
+        step_cache: std::sync::Mutex::new(flowstate_runner::cache::TtlCache::new(
+            std::time::Duration::from_secs(60),
+        )),
         token_exchanger: None,
     }
 }
@@ -330,7 +334,9 @@ async fn test_subprocess_execute_creates_child_and_pauses() {
     // processexecutions is VCA — create goes through MCP collection-create
     Mock::given(method("POST"))
         .and(path_regex(r"tools/collection-create"))
-        .and(body_partial_json(json!({ "collection": "processexecutions" })))
+        .and(body_partial_json(
+            json!({ "collection": "processexecutions" }),
+        ))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
             "documentId": "exec_new_child1"
         })))
@@ -412,7 +418,9 @@ async fn test_subprocess_resume_completed_with_output_mapping() {
     // processexecutions is VCA — get goes through MCP collection-get
     Mock::given(method("POST"))
         .and(path_regex(r"tools/collection-get"))
-        .and(body_partial_json(json!({ "collection": "processexecutions", "id": "exec_child00001" })))
+        .and(body_partial_json(
+            json!({ "collection": "processexecutions", "id": "exec_child00001" }),
+        ))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
             "document": {
                 "id": "exec_child00001",
@@ -469,7 +477,9 @@ async fn test_subprocess_resume_failed() {
 
     Mock::given(method("POST"))
         .and(path_regex(r"tools/collection-get"))
-        .and(body_partial_json(json!({ "collection": "processexecutions", "id": "exec_child_fail" })))
+        .and(body_partial_json(
+            json!({ "collection": "processexecutions", "id": "exec_child_fail" }),
+        ))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
             "document": {
                 "id": "exec_child_fail",
@@ -515,7 +525,9 @@ async fn test_subprocess_resume_still_running() {
 
     Mock::given(method("POST"))
         .and(path_regex(r"tools/collection-get"))
-        .and(body_partial_json(json!({ "collection": "processexecutions", "id": "exec_child_run" })))
+        .and(body_partial_json(
+            json!({ "collection": "processexecutions", "id": "exec_child_run" }),
+        ))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
             "document": {
                 "id": "exec_child_run",
@@ -581,7 +593,9 @@ async fn test_subprocess_idempotency_completed_child() {
     // MCP get to fetch existing child
     Mock::given(method("POST"))
         .and(path_regex(r"tools/collection-get"))
-        .and(body_partial_json(json!({ "collection": "processexecutions", "id": "exec_existing001" })))
+        .and(body_partial_json(
+            json!({ "collection": "processexecutions", "id": "exec_existing001" }),
+        ))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
             "document": {
                 "id": "exec_existing001",
@@ -635,7 +649,9 @@ async fn test_subprocess_idempotency_running_child_returns_paused() {
 
     Mock::given(method("POST"))
         .and(path_regex(r"tools/collection-get"))
-        .and(body_partial_json(json!({ "collection": "processexecutions", "id": "exec_existing002" })))
+        .and(body_partial_json(
+            json!({ "collection": "processexecutions", "id": "exec_existing002" }),
+        ))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
             "document": {
                 "id": "exec_existing002",
@@ -680,7 +696,9 @@ async fn test_subprocess_idempotency_failed_child_creates_new() {
     // MCP get returns failed child
     Mock::given(method("POST"))
         .and(path_regex(r"tools/collection-get"))
-        .and(body_partial_json(json!({ "collection": "processexecutions", "id": "exec_existing003" })))
+        .and(body_partial_json(
+            json!({ "collection": "processexecutions", "id": "exec_existing003" }),
+        ))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
             "document": {
                 "id": "exec_existing003",
@@ -694,7 +712,9 @@ async fn test_subprocess_idempotency_failed_child_creates_new() {
     // MCP create for new child
     Mock::given(method("POST"))
         .and(path_regex(r"tools/collection-create"))
-        .and(body_partial_json(json!({ "collection": "processexecutions" })))
+        .and(body_partial_json(
+            json!({ "collection": "processexecutions" }),
+        ))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
             "documentId": "exec_new_child3"
         })))

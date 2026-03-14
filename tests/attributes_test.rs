@@ -91,7 +91,9 @@ async fn test_load_from_rest() {
         .await;
 
     let rest = FlowstateRestClient::new(&mock.uri());
-    let map = AttributeMap::load(&rest, "org_test", "work_test").await.unwrap();
+    let map = AttributeMap::load(&rest, "org_test", "work_test")
+        .await
+        .unwrap();
 
     assert_eq!(map.tag_name_to_id("pending"), Some("attr_t1"));
     assert_eq!(map.category_name_to_id("Sales"), Some("attr_c1"));

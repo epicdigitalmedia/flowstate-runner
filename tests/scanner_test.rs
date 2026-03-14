@@ -4,11 +4,11 @@ use flowstate_runner::clients::rest::FlowstateRestClient;
 use flowstate_runner::config::Config;
 use flowstate_runner::handlers::RunContext;
 use flowstate_runner::models::process::EntityTriggerCondition;
+use flowstate_runner::scanner::scan;
 use flowstate_runner::scanner::{
     build_db_selector, evaluate_client_conditions, partition_conditions, pluralize_entity_type,
     seed_variables,
 };
-use flowstate_runner::scanner::scan;
 use serde_json::json;
 use std::path::PathBuf;
 use wiremock::matchers::{body_partial_json, method, path_regex};
@@ -375,8 +375,12 @@ fn make_scan_context(base_url: &str) -> RunContext {
         mcp: McpClient::new(base_url, "org_test", "work_test"),
         agent_executor: Box::new(flowstate_runner::agent::NoopAgentExecutor),
         attribute_map: AttributeMap::default(),
-        process_cache: std::sync::Mutex::new(flowstate_runner::cache::TtlCache::new(std::time::Duration::from_secs(60))),
-        step_cache: std::sync::Mutex::new(flowstate_runner::cache::TtlCache::new(std::time::Duration::from_secs(60))),
+        process_cache: std::sync::Mutex::new(flowstate_runner::cache::TtlCache::new(
+            std::time::Duration::from_secs(60),
+        )),
+        step_cache: std::sync::Mutex::new(flowstate_runner::cache::TtlCache::new(
+            std::time::Duration::from_secs(60),
+        )),
         token_exchanger: None,
     }
 }
@@ -433,7 +437,9 @@ async fn test_scan_creates_execution_for_matching_entity() {
     // No active executions (VCA — MCP query)
     Mock::given(method("POST"))
         .and(path_regex(r"tools/collection-query"))
-        .and(body_partial_json(json!({ "collection": "processexecutions" })))
+        .and(body_partial_json(
+            json!({ "collection": "processexecutions" }),
+        ))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({"documents": []})))
         .mount(&mock)
         .await;
@@ -441,7 +447,9 @@ async fn test_scan_creates_execution_for_matching_entity() {
     // Accept creation (VCA — MCP create)
     Mock::given(method("POST"))
         .and(path_regex(r"tools/collection-create"))
-        .and(body_partial_json(json!({ "collection": "processexecutions" })))
+        .and(body_partial_json(
+            json!({ "collection": "processexecutions" }),
+        ))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
             "documentId": "exec_created1"
         })))
@@ -539,7 +547,9 @@ async fn test_scan_filters_entities_client_side() {
     // No active executions (VCA — MCP query)
     Mock::given(method("POST"))
         .and(path_regex(r"tools/collection-query"))
-        .and(body_partial_json(json!({ "collection": "processexecutions" })))
+        .and(body_partial_json(
+            json!({ "collection": "processexecutions" }),
+        ))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({"documents": []})))
         .mount(&mock)
         .await;
@@ -547,7 +557,9 @@ async fn test_scan_filters_entities_client_side() {
     // Accept creation (VCA — MCP create)
     Mock::given(method("POST"))
         .and(path_regex(r"tools/collection-create"))
-        .and(body_partial_json(json!({ "collection": "processexecutions" })))
+        .and(body_partial_json(
+            json!({ "collection": "processexecutions" }),
+        ))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
             "documentId": "exec_filtered1"
         })))

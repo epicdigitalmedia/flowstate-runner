@@ -95,10 +95,7 @@ impl TokenExchanger {
 
     /// Exchange the API token for a JWT via the auth server.
     async fn exchange(&self) -> Result<CachedJwt> {
-        let body = [
-            ("grant_type", "api_token"),
-            ("api_token", &self.api_token),
-        ];
+        let body = [("grant_type", "api_token"), ("api_token", &self.api_token)];
 
         let resp = self
             .client
