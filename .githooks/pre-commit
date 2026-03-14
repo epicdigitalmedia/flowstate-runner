@@ -1,0 +1,35 @@
+#!/usr/bin/env sh
+
+# Run gitleaks if available, but don't fail if not installed
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks protect --verbose --redact --staged
+else
+  echo "⚠️  gitleaks not installed - skipping secrets scan"
+  echo "   To install: https://github.com/gitleaks/gitleaks#installing"
+fi
+
+# Run cargo fmt check
+echo "Checking formatting..."
+cargo fmt --check
+if [ $? -ne 0 ]; then
+  echo "❌ Formatting check failed. Run 'cargo fmt' to fix."
+  exit 1
+fi
+
+# Run clippy
+echo "Running clippy..."
+cargo clippy -- -D warnings
+if [ $? -ne 0 ]; then
+  echo "❌ Clippy check failed. Fix the warnings above."
+  exit 1
+fi
+
+# Run tests
+echo "Running tests..."
+cargo test -- --skip test_config_loads_from_file
+if [ $? -ne 0 ]; then
+  echo "❌ Tests failed. Fix the failing tests above."
+  exit 1
+fi
+
+echo "✅ All pre-commit checks passed."

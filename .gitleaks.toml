@@ -1,0 +1,19 @@
+# Gitleaks configuration for flowstate-runner
+# https://github.com/gitleaks/gitleaks
+
+[extend]
+# Use the default gitleaks rules
+useDefault = true
+
+[[rules]]
+  id = "bearer-jwt-token"
+  description = "Bearer token with JWT-like format (three dot-separated base64 segments)"
+  regex = '''Bearer\s+eyJ[A-Za-z0-9_-]+\.eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+'''
+  tags = ["token", "jwt"]
+
+[allowlist]
+  # Documentation and plan files may contain example tokens
+  paths = [
+    '''\.flowstate/docs/''',
+    '''docs/plans/'''
+  ]
